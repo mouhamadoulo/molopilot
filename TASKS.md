@@ -41,7 +41,7 @@
 | Docker Compose dev (Postgres) | ⬜ | | |
 | Schéma Prisma initial complet | ⬜ | | Selon § 5 du spec |
 | Migration initiale + RLS policies | ⬜ | | |
-| Config ESLint / Prettier / TS strict | ⬜ | | Partagée monorepo |
+| Config ESLint / Prettier / TS strict | ✅ | 2026-05-01 | Flat config + plugin Prisma |
 | Husky + lint-staged | ⬜ | | |
 | GitHub Actions CI (lint, typecheck, test) | ⬜ | | |
 | README.md (run local) | ⬜ | | |
