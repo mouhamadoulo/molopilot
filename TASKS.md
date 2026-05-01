@@ -35,10 +35,10 @@
 | Initialiser monorepo pnpm                 | ✅     | 2026-05-01 | `package.json`, `pnpm-workspace.yaml`, dotfiles           |
 | TypeScript base config                    | ✅     | 2026-05-01 | `tsconfig.base.json` strict                               |
 | Skeleton `apps/web` (Next.js 15)          | ⬜     |            |                                                           |
-| Skeleton `apps/api` (NestJS)              | ⬜     |            |                                                           |
+| Skeleton `apps/api` (NestJS)              | ✅     | 2026-05-01 | Skeleton sans build — modules health/prisma en Task 13/14 |
 | Package `packages/db` (Prisma)            | ✅     | 2026-05-01 | Skeleton — schéma complet en Task 8                       |
 | Package `packages/shared` (zod DTOs)      | ✅     | 2026-05-01 | `TenantIdSchema` initial + tests node:test                |
-| Docker Compose dev (Postgres)             | ⬜     |            |                                                           |
+| Docker Compose dev (Postgres)             | ⏸️     | 2026-05-01 | Fichiers OK — validation conteneur reportée (daemon down) |
 | Schéma Prisma initial complet             | ⬜     |            | Selon § 5 du spec                                         |
 | Migration initiale + RLS policies         | ⬜     |            |                                                           |
 | Config ESLint / Prettier / TS strict      | ✅     | 2026-05-01 | Flat config + plugin Prisma                               |
