@@ -36,7 +36,7 @@
 | TypeScript base config                    | ✅     | 2026-05-01 | `tsconfig.base.json` strict                               |
 | Skeleton `apps/web` (Next.js 15)          | ⬜     |            |                                                           |
 | Skeleton `apps/api` (NestJS)              | ⬜     |            |                                                           |
-| Package `packages/db` (Prisma)            | ⬜     |            |                                                           |
+| Package `packages/db` (Prisma)            | ✅     | 2026-05-01 | Skeleton — schéma complet en Task 8                       |
 | Package `packages/shared` (zod DTOs)      | ✅     | 2026-05-01 | `TenantIdSchema` initial + tests node:test                |
 | Docker Compose dev (Postgres)             | ⬜     |            |                                                           |
 | Schéma Prisma initial complet             | ⬜     |            | Selon § 5 du spec                                         |
