@@ -29,22 +29,22 @@
 
 **Plan :** `docs/superpowers/plans/2026-04-28-phase-0-fondations.md` _(à rédiger)_
 
-| Tâche                                     | Statut | Date       | Notes                                           |
-| ----------------------------------------- | ------ | ---------- | ----------------------------------------------- |
-| Rédiger Plan 1 (Phase 0)                  | 🟦     |            | En cours                                        |
-| Initialiser monorepo pnpm                 | ✅     | 2026-05-01 | `package.json`, `pnpm-workspace.yaml`, dotfiles |
-| TypeScript base config                    | ✅     | 2026-05-01 | `tsconfig.base.json` strict                     |
-| Skeleton `apps/web` (Next.js 15)          | ⬜     |            |                                                 |
-| Skeleton `apps/api` (NestJS)              | ⬜     |            |                                                 |
-| Package `packages/db` (Prisma)            | ⬜     |            |                                                 |
-| Package `packages/shared` (zod DTOs)      | ⬜     |            |                                                 |
-| Docker Compose dev (Postgres)             | ⬜     |            |                                                 |
-| Schéma Prisma initial complet             | ⬜     |            | Selon § 5 du spec                               |
-| Migration initiale + RLS policies         | ⬜     |            |                                                 |
-| Config ESLint / Prettier / TS strict      | ✅     | 2026-05-01 | Flat config + plugin Prisma                     |
-| Husky + lint-staged                       | ✅     | 2026-05-01 | `.husky/pre-commit` → `lint-staged`             |
-| GitHub Actions CI (lint, typecheck, test) | ⬜     |            |                                                 |
-| README.md (run local)                     | ⬜     |            |                                                 |
+| Tâche                                     | Statut | Date       | Notes                                                     |
+| ----------------------------------------- | ------ | ---------- | --------------------------------------------------------- |
+| Rédiger Plan 1 (Phase 0)                  | ✅     | 2026-05-01 | `docs/superpowers/plans/2026-04-28-phase-0-fondations.md` |
+| Initialiser monorepo pnpm                 | ✅     | 2026-05-01 | `package.json`, `pnpm-workspace.yaml`, dotfiles           |
+| TypeScript base config                    | ✅     | 2026-05-01 | `tsconfig.base.json` strict                               |
+| Skeleton `apps/web` (Next.js 15)          | ⬜     |            |                                                           |
+| Skeleton `apps/api` (NestJS)              | ⬜     |            |                                                           |
+| Package `packages/db` (Prisma)            | ⬜     |            |                                                           |
+| Package `packages/shared` (zod DTOs)      | ✅     | 2026-05-01 | `TenantIdSchema` initial + tests node:test                |
+| Docker Compose dev (Postgres)             | ⬜     |            |                                                           |
+| Schéma Prisma initial complet             | ⬜     |            | Selon § 5 du spec                                         |
+| Migration initiale + RLS policies         | ⬜     |            |                                                           |
+| Config ESLint / Prettier / TS strict      | ✅     | 2026-05-01 | Flat config + plugin Prisma                               |
+| Husky + lint-staged                       | ✅     | 2026-05-01 | `.husky/pre-commit` → `lint-staged`                       |
+| GitHub Actions CI (lint, typecheck, test) | ⬜     |            |                                                           |
+| README.md (run local)                     | ⬜     |            |                                                           |
 
 ---
 
