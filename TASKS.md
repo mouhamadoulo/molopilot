@@ -32,7 +32,7 @@
 | Tâche | Statut | Date | Notes |
 |-------|--------|------|-------|
 | Rédiger Plan 1 (Phase 0) | 🟦 | | En cours |
-| Initialiser monorepo pnpm | ⬜ | | |
+| Initialiser monorepo pnpm | ✅ | 2026-05-01 | `package.json`, `pnpm-workspace.yaml`, dotfiles |
 | Skeleton `apps/web` (Next.js 15) | ⬜ | | |
 | Skeleton `apps/api` (NestJS) | ⬜ | | |
 | Package `packages/db` (Prisma) | ⬜ | | |
