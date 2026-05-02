@@ -14,21 +14,21 @@ SaaS de gestion d'établissements (restaurants, cafés, boutiques) ciblant le ma
 
 ## Stack technique
 
-| Couche | Choix |
-|--------|-------|
-| Front | Next.js 15 App Router (React Server Components), TypeScript strict |
-| Back | NestJS, TypeScript |
-| ORM | Prisma |
-| Base | Postgres (Neon ou Supabase Postgres, région EU) |
-| Monorepo | pnpm workspaces |
-| Tests | Jest (unit + intégration via Testcontainers), Playwright (E2E) |
-| Lint / format | ESLint + Prettier (config partagée), Husky + lint-staged |
-| Offline (caisse) | Service Worker + IndexedDB via Dexie + Background Sync |
-| Auth | argon2id (password + PIN), JWT (jsonwebtoken ou jose) |
-| Logs | Pino |
-| Erreurs | Sentry (front + API) |
-| CI/CD | GitHub Actions |
-| Hébergement | Vercel (front), Railway / Fly.io (API), Neon / Supabase (DB) |
+| Couche           | Choix                                                              |
+| ---------------- | ------------------------------------------------------------------ |
+| Front            | Next.js 15 App Router (React Server Components), TypeScript strict |
+| Back             | NestJS, TypeScript                                                 |
+| ORM              | Prisma                                                             |
+| Base             | Postgres (Neon ou Supabase Postgres, région EU)                    |
+| Monorepo         | pnpm workspaces                                                    |
+| Tests            | Jest (unit + intégration via Testcontainers), Playwright (E2E)     |
+| Lint / format    | ESLint + Prettier (config partagée), Husky + lint-staged           |
+| Offline (caisse) | Service Worker + IndexedDB via Dexie + Background Sync             |
+| Auth             | argon2id (password + PIN), JWT (jsonwebtoken ou jose)              |
+| Logs             | Pino                                                               |
+| Erreurs          | Sentry (front + API)                                               |
+| CI/CD            | GitHub Actions                                                     |
+| Hébergement      | Vercel (front), Railway / Fly.io (API), Neon / Supabase (DB)       |
 
 ## Structure repo
 

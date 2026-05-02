@@ -9,6 +9,7 @@
 **Tech Stack:** Node 20 LTS, pnpm 9, TypeScript 5 strict, Next.js 15, NestJS 10, Prisma 5, Postgres 16, Docker, ESLint 9 (flat config), Prettier 3, Husky 9, lint-staged 15, Jest 29, Testcontainers, GitHub Actions.
 
 **Conventions du projet :**
+
 - Tous les commits suivent Conventional Commits.
 - Après chaque tâche complétée, mettre à jour `TASKS.md` à la racine **dans le même commit** que le code de la tâche.
 - Si une convention nouvelle apparaît, l'ajouter à `CLAUDE.md` dans le même commit.
@@ -85,6 +86,7 @@ molopilot/
 ```
 
 **Responsabilités par fichier clé :**
+
 - `package.json` racine : scripts agrégés (`dev`, `build`, `lint`, `typecheck`, `test`).
 - `pnpm-workspace.yaml` : déclare les workspaces.
 - `tsconfig.base.json` : base TS strict, étendu par chaque package.
@@ -98,6 +100,7 @@ molopilot/
 ## Task 1: Initialiser le monorepo pnpm
 
 **Files:**
+
 - Create: `package.json`
 - Create: `pnpm-workspace.yaml`
 - Create: `.gitignore`
@@ -230,13 +233,8 @@ packages:
     "typescript": "^5.6.3"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,mjs,cjs}": [
-      "eslint --fix --max-warnings 0",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml,prisma}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx,js,jsx,mjs,cjs}": ["eslint --fix --max-warnings 0", "prettier --write"],
+    "*.{json,md,yml,yaml,prisma}": ["prettier --write"]
   }
 }
 ```
@@ -244,9 +242,11 @@ packages:
 - [ ] **Step 7: Installer dépendances racine**
 
 Run:
+
 ```bash
 pnpm install
 ```
+
 Expected : crée `pnpm-lock.yaml`, télécharge ESLint, Prettier, Husky, etc. Pas de packages workspace à résoudre encore.
 
 - [ ] **Step 8: Mettre à jour TASKS.md**
@@ -265,6 +265,7 @@ git commit -m "chore: initialize pnpm monorepo with shared dev tooling"
 ## Task 2: TypeScript base config
 
 **Files:**
+
 - Create: `tsconfig.base.json`
 
 - [ ] **Step 1: Créer `tsconfig.base.json`**
@@ -308,6 +309,7 @@ git commit -m "chore: add shared strict TypeScript base config"
 ## Task 3: ESLint + Prettier flat config partagés
 
 **Files:**
+
 - Create: `eslint.config.mjs`
 - Create: `.prettierrc.json`
 - Create: `.prettierignore`
@@ -329,6 +331,7 @@ git commit -m "chore: add shared strict TypeScript base config"
 - [ ] **Step 2: Installer plugin Prettier Prisma**
 
 Run :
+
 ```bash
 pnpm add -Dw prettier-plugin-prisma
 ```
@@ -400,9 +403,11 @@ export default [
 - [ ] **Step 5: Vérifier que `pnpm lint` ne plante pas**
 
 Run :
+
 ```bash
 pnpm lint
 ```
+
 Expected : exit 0, aucun fichier TS encore donc rien à analyser. Si ça plante, ajuster avant de commit.
 
 - [ ] **Step 6: Mettre à jour TASKS.md**
@@ -421,14 +426,17 @@ git commit -m "chore: add shared ESLint flat config and Prettier with Prisma plu
 ## Task 4: Husky + lint-staged pre-commit hook
 
 **Files:**
+
 - Create: `.husky/pre-commit`
 
 - [ ] **Step 1: Initialiser husky**
 
 Run :
+
 ```bash
 pnpm exec husky init
 ```
+
 Expected : crée `.husky/pre-commit` avec `npm test`.
 
 - [ ] **Step 2: Remplacer le contenu de `.husky/pre-commit`**
@@ -440,16 +448,19 @@ pnpm exec lint-staged
 - [ ] **Step 3: Tester avec un fichier bidon**
 
 Run :
+
 ```bash
 echo "const x: number = 1" > scratch.ts
 git add scratch.ts
 git commit -m "test: husky"
 ```
+
 Expected : le hook exécute `lint-staged`, qui lint + format `scratch.ts` et autorise le commit.
 
 - [ ] **Step 4: Annuler le commit de test**
 
 Run :
+
 ```bash
 git reset --soft HEAD~1
 git restore --staged scratch.ts
@@ -472,6 +483,7 @@ git commit -m "chore: configure husky pre-commit with lint-staged"
 ## Task 5: Initialiser `packages/shared` (zod DTOs)
 
 **Files:**
+
 - Create: `packages/shared/package.json`
 - Create: `packages/shared/tsconfig.json`
 - Create: `packages/shared/src/index.ts`
@@ -543,9 +555,11 @@ test('TenantIdSchema rejects empty string', () => {
 - [ ] **Step 4: Lancer le test pour confirmer l'échec**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/shared test
 ```
+
 Expected : FAIL — `TenantIdSchema` non exporté.
 
 - [ ] **Step 5: Implémenter `packages/shared/src/index.ts`**
@@ -560,18 +574,22 @@ export type TenantId = z.infer<typeof TenantIdSchema>;
 - [ ] **Step 6: Installer + relancer le test**
 
 Run :
+
 ```bash
 pnpm install
 pnpm --filter @molopilot/shared test
 ```
+
 Expected : PASS.
 
 - [ ] **Step 7: Vérifier le typecheck**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/shared typecheck
 ```
+
 Expected : exit 0.
 
 - [ ] **Step 8: Mettre à jour TASKS.md**
@@ -590,6 +608,7 @@ git commit -m "feat(shared): bootstrap zod DTO package with TenantIdSchema"
 ## Task 6: Initialiser `packages/db` (Prisma)
 
 **Files:**
+
 - Create: `packages/db/package.json`
 - Create: `packages/db/tsconfig.json`
 - Create: `packages/db/src/index.ts`
@@ -663,14 +682,13 @@ datasource db {
 
 ```ts
 export { PrismaClient } from '@prisma/client';
-export type {
-  Prisma,
-} from '@prisma/client';
+export type { Prisma } from '@prisma/client';
 ```
 
 - [ ] **Step 5: Installer les dépendances**
 
 Run :
+
 ```bash
 pnpm install
 ```
@@ -691,6 +709,7 @@ git commit -m "feat(db): bootstrap @molopilot/db package with empty Prisma schem
 ## Task 7: Docker Compose Postgres pour le dev
 
 **Files:**
+
 - Create: `docker-compose.yml`
 - Create: `.env.example`
 
@@ -745,6 +764,7 @@ EOSQL
 ```
 
 Run :
+
 ```bash
 chmod +x scripts/postgres-init.sh
 ```
@@ -752,23 +772,28 @@ chmod +x scripts/postgres-init.sh
 - [ ] **Step 4: Démarrer Postgres**
 
 Run :
+
 ```bash
 pnpm docker:up
 docker compose ps
 ```
+
 Expected : container `molopilot-postgres` healthy après ~10s.
 
 - [ ] **Step 5: Vérifier la connexion**
 
 Run :
+
 ```bash
 docker exec -it molopilot-postgres psql -U molopilot -d molopilot -c '\l'
 ```
+
 Expected : liste les bases dont `molopilot` et `molopilot_shadow`.
 
 - [ ] **Step 6: Copier .env.example vers .env (local uniquement, pas commité)**
 
 Run :
+
 ```bash
 cp .env.example .env
 ```
@@ -789,6 +814,7 @@ git commit -m "chore(infra): add Postgres docker-compose with shadow DB for migr
 ## Task 8: Schéma Prisma initial complet (selon spec § 5)
 
 **Files:**
+
 - Modify: `packages/db/prisma/schema.prisma`
 
 - [ ] **Step 1: Remplacer le contenu de `packages/db/prisma/schema.prisma`**
@@ -895,18 +921,18 @@ model Establishment {
 }
 
 model User {
-  id              String    @id @default(uuid()) @db.Uuid
-  tenantId        String    @map("tenant_id") @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
   email           String?
-  passwordHash    String?   @map("password_hash")
-  pinHash         String?   @map("pin_hash")
+  passwordHash    String?  @map("password_hash")
+  pinHash         String?  @map("pin_hash")
   role            UserRole
-  establishmentId String?   @map("establishment_id") @db.Uuid
-  createdAt       DateTime  @default(now()) @map("created_at")
+  establishmentId String?  @map("establishment_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
 
-  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  establishment Establishment? @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
-  cashierSales  Sale[]         @relation("SaleCashier")
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  establishment  Establishment?  @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+  cashierSales   Sale[]          @relation("SaleCashier")
   stockMovements StockMovement[]
 
   @@unique([tenantId, email])
@@ -934,19 +960,19 @@ model Category {
 }
 
 model Product {
-  id          String      @id @default(uuid()) @db.Uuid
-  tenantId    String      @map("tenant_id") @db.Uuid
-  sku         String
-  name        String
-  categoryId  String?     @map("category_id") @db.Uuid
-  priceCents  Int         @map("price_cents")
-  costCents   Int         @default(0) @map("cost_cents")
-  taxRate     Decimal     @default(0) @map("tax_rate") @db.Decimal(5, 4)
-  trackStock  Boolean     @default(true) @map("track_stock")
-  archived    Boolean     @default(false)
-  unit        ProductUnit @default(PIECE)
-  barcode     String?
-  createdAt   DateTime    @default(now()) @map("created_at")
+  id         String      @id @default(uuid()) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  sku        String
+  name       String
+  categoryId String?     @map("category_id") @db.Uuid
+  priceCents Int         @map("price_cents")
+  costCents  Int         @default(0) @map("cost_cents")
+  taxRate    Decimal     @default(0) @map("tax_rate") @db.Decimal(5, 4)
+  trackStock Boolean     @default(true) @map("track_stock")
+  archived   Boolean     @default(false)
+  unit       ProductUnit @default(PIECE)
+  barcode    String?
+  createdAt  DateTime    @default(now()) @map("created_at")
 
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   category       Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -1058,14 +1084,17 @@ model SaleItem {
 - [ ] **Step 2: Vérifier la syntaxe**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/db exec prisma validate
 ```
+
 Expected : `The schema at packages/db/prisma/schema.prisma is valid 🚀`.
 
 - [ ] **Step 3: Formatter le fichier**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/db exec prisma format
 ```
@@ -1086,6 +1115,7 @@ git commit -m "feat(db): add full V1 Prisma schema (tenant, catalog, stock, sale
 ## Task 9: Première migration Prisma
 
 **Files:**
+
 - Create: `packages/db/prisma/migrations/0_init/migration.sql` (généré)
 
 - [ ] **Step 1: Créer la migration initiale**
@@ -1093,17 +1123,21 @@ git commit -m "feat(db): add full V1 Prisma schema (tenant, catalog, stock, sale
 S'assurer que Postgres tourne (`pnpm docker:up`), `.env` à la racine présent, puis :
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/db exec prisma migrate dev --name init
 ```
+
 Expected : génère `packages/db/prisma/migrations/<timestamp>_init/migration.sql`, applique sur la DB locale, génère le client Prisma. Les enums et tables sont créés.
 
 - [ ] **Step 2: Vérifier en SQL**
 
 Run :
+
 ```bash
 docker exec -it molopilot-postgres psql -U molopilot -d molopilot -c "\dt"
 ```
+
 Expected : liste les tables `tenant`, `establishment`, `app_user`, `category`, `product`, `stock_level`, `stock_movement`, `sale`, `sale_item`.
 
 - [ ] **Step 3: Mettre à jour TASKS.md**
@@ -1122,14 +1156,17 @@ git commit -m "feat(db): create initial migration applying V1 schema"
 ## Task 10: Activer Row Level Security (RLS)
 
 **Files:**
+
 - Create: `packages/db/prisma/migrations/<next>_rls/migration.sql` (manuelle)
 
 - [ ] **Step 1: Créer la migration RLS manuellement**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/db exec prisma migrate dev --create-only --name rls
 ```
+
 Expected : crée un nouveau dossier de migration vide.
 
 - [ ] **Step 2: Remplacer le contenu de la migration RLS**
@@ -1200,17 +1237,21 @@ Note : la table `tenant` elle-même n'est PAS sous RLS — elle est gérée par 
 - [ ] **Step 3: Appliquer la migration**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/db exec prisma migrate dev
 ```
+
 Expected : applique le SQL ci-dessus, sortie `Migration applied successfully`.
 
 - [ ] **Step 4: Vérifier les policies en SQL**
 
 Run :
+
 ```bash
 docker exec -it molopilot-postgres psql -U molopilot -d molopilot -c "\d+ product" | head -40
 ```
+
 Expected : voir `Policies: tenant_isolation` listée sous la définition de la table.
 
 - [ ] **Step 5: Mettre à jour TASKS.md**
@@ -1229,6 +1270,7 @@ git commit -m "feat(db): enable Postgres RLS with tenant_isolation policies"
 ## Task 11: Seed minimal pour le dev
 
 **Files:**
+
 - Create: `packages/db/prisma/seed.ts`
 
 - [ ] **Step 1: Créer `packages/db/prisma/seed.ts`**
@@ -1327,17 +1369,21 @@ main()
 ```
 
 Run :
+
 ```bash
 pnpm db:seed
 ```
+
 Expected : `Seed OK: tenant demo-resto + establishment Plateau`.
 
 - [ ] **Step 3: Vérifier en SQL**
 
 Run :
+
 ```bash
 docker exec -it molopilot-postgres psql -U molopilot -d molopilot -c "SET row_security = off; SELECT slug FROM tenant; SELECT name, type FROM establishment;"
 ```
+
 Expected : `demo-resto` listé, et `Plateau | RESTO`.
 
 - [ ] **Step 4: Mettre à jour TASKS.md**
@@ -1356,6 +1402,7 @@ git commit -m "feat(db): add minimal dev seed (demo tenant + establishment)"
 ## Task 12: Initialiser `apps/api` (NestJS)
 
 **Files:**
+
 - Create: `apps/api/package.json`
 - Create: `apps/api/tsconfig.json`
 - Create: `apps/api/tsconfig.build.json`
@@ -1485,6 +1532,7 @@ void bootstrap();
 - [ ] **Step 7: Installer**
 
 Run :
+
 ```bash
 pnpm install
 ```
@@ -1505,6 +1553,7 @@ git commit -m "feat(api): scaffold NestJS application skeleton"
 ## Task 13: PrismaService NestJS
 
 **Files:**
+
 - Create: `apps/api/src/prisma/prisma.service.ts`
 - Create: `apps/api/src/prisma/prisma.module.ts`
 - Create: `apps/api/src/prisma/prisma.service.spec.ts`
@@ -1585,9 +1634,11 @@ module.exports = {
 - [ ] **Step 5: Lancer le test**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api test
 ```
+
 Expected : PASS — `PrismaService extends PrismaClient`.
 
 - [ ] **Step 6: Mettre à jour TASKS.md**
@@ -1606,6 +1657,7 @@ git commit -m "feat(api): add PrismaService with module-scoped lifecycle"
 ## Task 14: Endpoint `/health` API + test
 
 **Files:**
+
 - Create: `apps/api/src/health/health.controller.ts`
 - Create: `apps/api/src/health/health.module.ts`
 - Create: `apps/api/src/health/health.controller.spec.ts`
@@ -1653,9 +1705,11 @@ describe('HealthController', () => {
 - [ ] **Step 2: Lancer le test pour confirmer l'échec**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api test
 ```
+
 Expected : FAIL — `HealthController` n'existe pas.
 
 - [ ] **Step 3: Implémenter `apps/api/src/health/health.controller.ts`**
@@ -1697,21 +1751,27 @@ export class HealthModule {}
 - [ ] **Step 5: Relancer les tests**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api test
 ```
+
 Expected : 2 specs PASS dans `health.controller.spec.ts`.
 
 - [ ] **Step 6: Vérifier que l'API démarre**
 
 Run dans un terminal :
+
 ```bash
 pnpm --filter @molopilot/api dev
 ```
+
 Puis dans un autre :
+
 ```bash
 curl http://localhost:3001/health
 ```
+
 Expected : `{"status":"ok","db":"ok"}`.
 
 Stopper le serveur (Ctrl+C).
@@ -1732,6 +1792,7 @@ git commit -m "feat(api): add /health endpoint with DB ping"
 ## Task 15: Test d'intégration RLS critique (Testcontainers)
 
 **Files:**
+
 - Create: `apps/api/test/rls.e2e-spec.ts`
 - Create: `apps/api/test/jest-e2e.config.cjs`
 
@@ -1853,6 +1914,7 @@ describe('RLS tenant isolation', () => {
 - [ ] **Step 3: Installer Testcontainers postgres**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api add -D @testcontainers/postgresql
 ```
@@ -1862,9 +1924,11 @@ pnpm --filter @molopilot/api add -D @testcontainers/postgresql
 Pré-requis : Docker daemon disponible (Testcontainers en a besoin).
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api test:e2e
 ```
+
 Expected : 3 specs PASS dans `rls.e2e-spec.ts`. Le démarrage du container peut prendre 30-60s la première fois.
 
 - [ ] **Step 5: Mettre à jour TASKS.md**
@@ -1883,6 +1947,7 @@ git commit -m "test(api): add RLS isolation e2e suite using Testcontainers"
 ## Task 16: Initialiser `apps/web` (Next.js 15)
 
 **Files:**
+
 - Create: `apps/web/package.json`
 - Create: `apps/web/tsconfig.json`
 - Create: `apps/web/next.config.mjs`
@@ -1998,6 +2063,7 @@ export async function GET(): Promise<Response> {
 - [ ] **Step 7: Installer**
 
 Run :
+
 ```bash
 pnpm install
 ```
@@ -2005,13 +2071,17 @@ pnpm install
 - [ ] **Step 8: Lancer le serveur de dev et vérifier**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/web dev
 ```
+
 Dans un autre terminal :
+
 ```bash
 curl http://localhost:3000/api/health
 ```
+
 Expected : `{"status":"ok","service":"web"}`.
 
 Visiter `http://localhost:3000` dans un navigateur — doit afficher la page d'accueil.
@@ -2021,9 +2091,11 @@ Stopper (Ctrl+C).
 - [ ] **Step 9: Vérifier le typecheck**
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/web typecheck
 ```
+
 Expected : exit 0.
 
 - [ ] **Step 10: Mettre à jour TASKS.md**
@@ -2042,6 +2114,7 @@ git commit -m "feat(web): scaffold Next.js 15 App Router skeleton with health ro
 ## Task 17: GitHub Actions CI
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 - [ ] **Step 1: Créer `.github/workflows/ci.yml`**
@@ -2151,6 +2224,7 @@ jobs:
 - [ ] **Step 2: Vérifier en local que `pnpm lint`, `pnpm typecheck`, `pnpm test` passent**
 
 Run :
+
 ```bash
 pnpm install --frozen-lockfile
 pnpm db:generate
@@ -2159,6 +2233,7 @@ pnpm format:check
 pnpm typecheck
 pnpm test
 ```
+
 Expected : tout vert. Si ça pète, corriger avant le commit (la CI fera la même chose à distance).
 
 - [ ] **Step 3: Mettre à jour TASKS.md**
@@ -2179,11 +2254,12 @@ Une fois le repo poussé sur GitHub, vérifier que le run apparaît vert dans l'
 ## Task 18: README et finalisation Phase 0
 
 **Files:**
+
 - Create: `README.md`
 
 - [ ] **Step 1: Créer `README.md`**
 
-```markdown
+````markdown
 # Molopilot
 
 SaaS de gestion d'établissements (restaurants, cafés, boutiques) pour le marché sénégalais et l'Afrique francophone.
@@ -2208,6 +2284,7 @@ pnpm db:generate
 pnpm db:migrate
 pnpm db:seed
 ```
+````
 
 ## Lancer en dev
 
@@ -2221,18 +2298,18 @@ pnpm dev
 
 ## Commandes utiles
 
-| Commande | Effet |
-|----------|-------|
-| `pnpm dev` | Lance front + API en parallèle (mode watch) |
-| `pnpm lint` | ESLint sur tout le repo |
-| `pnpm format` | Prettier --write |
-| `pnpm typecheck` | TS strict sur tous les packages |
-| `pnpm test` | Tests unitaires de tous les packages |
-| `pnpm --filter @molopilot/api test:e2e` | Tests E2E API (Testcontainers) |
-| `pnpm db:migrate` | Applique migrations Prisma en dev |
-| `pnpm db:seed` | Seed du tenant démo |
-| `pnpm db:generate` | Régénère le client Prisma |
-| `pnpm docker:up` / `down` | Démarre / arrête Postgres |
+| Commande                                | Effet                                       |
+| --------------------------------------- | ------------------------------------------- |
+| `pnpm dev`                              | Lance front + API en parallèle (mode watch) |
+| `pnpm lint`                             | ESLint sur tout le repo                     |
+| `pnpm format`                           | Prettier --write                            |
+| `pnpm typecheck`                        | TS strict sur tous les packages             |
+| `pnpm test`                             | Tests unitaires de tous les packages        |
+| `pnpm --filter @molopilot/api test:e2e` | Tests E2E API (Testcontainers)              |
+| `pnpm db:migrate`                       | Applique migrations Prisma en dev           |
+| `pnpm db:seed`                          | Seed du tenant démo                         |
+| `pnpm db:generate`                      | Régénère le client Prisma                   |
+| `pnpm docker:up` / `down`               | Démarre / arrête Postgres                   |
 
 ## Structure
 
@@ -2247,7 +2324,8 @@ packages/shared # zod DTOs partagés
 
 - Unit : Jest dans `apps/api/src/**/*.spec.ts`, tests Node natif dans `packages/shared/src/**/*.spec.ts`
 - E2E : `apps/api/test/*.e2e-spec.ts` (Testcontainers, exigent Docker)
-```
+
+````
 
 - [ ] **Step 2: Mettre à jour TASKS.md — clôture Phase 0**
 
@@ -2262,26 +2340,32 @@ Dans la section "Phases d'implémentation", remplacer `Fondations ... ← en cou
 ```bash
 git add README.md TASKS.md CLAUDE.md
 git commit -m "docs: add README and close Phase 0 in tracking files"
-```
+````
 
 - [ ] **Step 5: Vérifier que tout passe une dernière fois**
 
 Run :
+
 ```bash
 pnpm lint && pnpm format:check && pnpm typecheck && pnpm test
 ```
+
 Expected : tout vert.
 
 Run :
+
 ```bash
 pnpm --filter @molopilot/api test:e2e
 ```
+
 Expected : 3 specs RLS PASS.
 
 Run :
+
 ```bash
 pnpm dev
 ```
+
 Visiter `http://localhost:3000` et `http://localhost:3001/health`. Tout doit répondre.
 
 - [ ] **Step 6: Tag Phase 0**
@@ -2296,6 +2380,7 @@ git push --tags
 ## Self-Review (à exécuter par l'auteur du plan avant handoff)
 
 Couverture spec :
+
 - § 4 Architecture (monorepo, front/back séparés, Postgres) → Tasks 1, 5, 6, 7, 12, 16
 - § 5 Modèle de données → Tasks 8, 9
 - § 6 RLS → Tasks 10, 15

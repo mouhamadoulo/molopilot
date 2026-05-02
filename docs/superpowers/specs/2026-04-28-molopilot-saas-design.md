@@ -11,6 +11,7 @@
 Molopilot est un SaaS de gestion opérationnelle pour petits établissements (restaurants, cafés, boutiques) à destination du **marché sénégalais et de l'Afrique francophone**. Il vise les patrons indépendants ou de petites chaînes (1 à 5 points de vente) qui n'ont aujourd'hui souvent ni caisse informatisée, ni suivi stock fiable.
 
 **Différenciateurs locaux :**
+
 - Multi-vertical générique (un seul outil pour resto, café, boutique avec configuration par type)
 - Tolérance aux coupures réseau (offline-first sur la caisse)
 - Tarification prévisible en FCFA (pas de % sur CA)
@@ -19,6 +20,7 @@ Molopilot est un SaaS de gestion opérationnelle pour petits établissements (re
 ## 2. Périmètre MVP
 
 **Inclus dans la V1 :**
+
 - Catalogue produits / menu (CRUD, catégories, archivage)
 - Caisse (PWA, fonctionne offline, encaissement multi-modes)
 - Stock (mouvements, niveaux par établissement, alertes seuil bas)
@@ -30,6 +32,7 @@ Molopilot est un SaaS de gestion opérationnelle pour petits établissements (re
 - Interface FR uniquement (architecture i18n-ready)
 
 **Exclu de la V1 (V2+) :**
+
 - API Wave / Orange Money (intégration paiement réelle)
 - Module KDS (Kitchen Display System) restaurant
 - Réservations / table management
@@ -42,21 +45,21 @@ Molopilot est un SaaS de gestion opérationnelle pour petits établissements (re
 
 ## 3. Décisions techniques de référence
 
-| Axe | Décision |
-|-----|----------|
-| Marché | Sénégal / Afrique francophone |
-| Vertical MVP | Multi (resto/café/boutique), config par `Establishment.type` |
-| Plateforme | Web responsive + offline (Service Worker + IndexedDB) |
-| Multi-tenant | Schéma partagé Postgres, `tenant_id` sur chaque table métier, RLS active |
-| Auth | Patron email/password (argon2id), caissier PIN 6 chiffres + JWT device |
-| Paiements clients | Saisie manuelle MVP (Cash / Wave / OM / Mixte), API V2 |
-| Stack front | Next.js 15 App Router (React Server Components), TypeScript strict |
-| Stack back | NestJS (TypeScript), modules par bounded context |
-| ORM | Prisma |
-| Base | Postgres managé (Neon ou Supabase Postgres, région EU) |
-| Langue | FR uniquement V1, archi i18n-ready (clés extraites) |
-| Pricing | Forfait mensuel par établissement (ex. 15 000 FCFA) |
-| Devise interne | XOF (FCFA), montants en cents (entiers) |
+| Axe               | Décision                                                                 |
+| ----------------- | ------------------------------------------------------------------------ |
+| Marché            | Sénégal / Afrique francophone                                            |
+| Vertical MVP      | Multi (resto/café/boutique), config par `Establishment.type`             |
+| Plateforme        | Web responsive + offline (Service Worker + IndexedDB)                    |
+| Multi-tenant      | Schéma partagé Postgres, `tenant_id` sur chaque table métier, RLS active |
+| Auth              | Patron email/password (argon2id), caissier PIN 6 chiffres + JWT device   |
+| Paiements clients | Saisie manuelle MVP (Cash / Wave / OM / Mixte), API V2                   |
+| Stack front       | Next.js 15 App Router (React Server Components), TypeScript strict       |
+| Stack back        | NestJS (TypeScript), modules par bounded context                         |
+| ORM               | Prisma                                                                   |
+| Base              | Postgres managé (Neon ou Supabase Postgres, région EU)                   |
+| Langue            | FR uniquement V1, archi i18n-ready (clés extraites)                      |
+| Pricing           | Forfait mensuel par établissement (ex. 15 000 FCFA)                      |
+| Devise interne    | XOF (FCFA), montants en cents (entiers)                                  |
 
 ## 4. Architecture globale
 
@@ -92,6 +95,7 @@ Molopilot est un SaaS de gestion opérationnelle pour petits établissements (re
 ```
 
 **Déploiements séparés :**
+
 - Front Next.js → Vercel (ou Railway)
 - API NestJS → Railway / Fly.io (région la plus proche du Sénégal — Paris)
 - DB → Neon / Supabase (région EU)
@@ -161,6 +165,7 @@ SaleItem
 ```
 
 **Notes clés :**
+
 - `client_uuid` sur `Sale` = clé idempotence pour gérer la sync offline ; un POST avec un `client_uuid` déjà connu retourne le `Sale` existant sans en créer un nouveau.
 - `StockMovement` est la source de vérité ; `StockLevel` est une projection recalculable.
 - Tous les montants sont en **cents entiers**. XOF n'a pas de décimale courante, mais on garde la structure pour future devise multi.
@@ -296,6 +301,7 @@ db.meta           # last_sync_at, device_id, current_cashier_id
 ### Caisse (front caissier — PWA)
 
 Layout tablette en mode paysage :
+
 - **Gauche** : grille catégories + produits (gros boutons tactiles, photo si dispo).
 - **Droite** : ticket en cours (qty, suppression d'item, sous-total, total, TVA).
 - **Bas** : bouton **Encaisser** → modal mode paiement (Cash / Wave / OM / Mixte) → impression ticket (V2 : impression Bluetooth ; V1 : aperçu A4 imprimable depuis le navigateur).
@@ -376,16 +382,19 @@ Annulation : avant encaissement, libre. Après encaissement, nécessite l'authen
 ### Pyramide de tests
 
 **Unit (Jest, côté API + front)**
+
 - Pure logic : calcul total, TVA, sous-total ticket, coût moyen pondéré.
 - Domain services NestJS (mock Prisma).
 - Reducers / hooks front.
 
 **Intégration (Jest + Testcontainers Postgres)**
+
 - Modules NestJS bout-en-bout : crée tenant, crée produit, crée vente, vérifie stock.
 - **RLS test critique** : créer 2 tenants, vérifier qu'une requête en contexte tenant A ne voit jamais les données de tenant B (avec ET sans la couche Prisma extends).
 - Sync idempotence : `POST /sync/sales` avec le même `client_uuid` 2× → une seule vente, retour identique.
 
 **E2E (Playwright)**
+
 - Parcours patron : signup → crée produit → voit dashboard.
 - Parcours caissier : login PIN → crée vente → encaisse → ticket.
 - **Offline scenario** : `page.context().setOffline(true)` → création de vente → repasser online → vérifier sync correcte.
