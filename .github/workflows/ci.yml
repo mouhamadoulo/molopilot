@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.12.0'
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: molopilot
+          POSTGRES_PASSWORD: molopilot
+          POSTGRES_DB: molopilot
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U molopilot"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://molopilot:molopilot@localhost:5432/molopilot?schema=public
+      SHADOW_DATABASE_URL: postgresql://molopilot:molopilot@localhost:5432/molopilot_shadow?schema=public
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
+
+      # NOTE: apps/api typecheck excluded until health/prisma modules land (Phase 1, Task 13/14).
+      - name: Typecheck (web, db, shared)
+        run: pnpm -r --filter "!@molopilot/api" typecheck
+
+      - name: Create shadow database
+        run: |
+          PGPASSWORD=molopilot psql -h localhost -U molopilot -d molopilot \
+            -c "CREATE DATABASE molopilot_shadow;"
+
+      - name: Apply migrations
+        run: pnpm --filter @molopilot/db exec prisma migrate deploy
+
+      - name: Test
+        run: pnpm test
