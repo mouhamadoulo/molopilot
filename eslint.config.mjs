@@ -13,6 +13,7 @@ export default [
       '**/coverage/**',
       '**/*.tsbuildinfo',
       'packages/db/prisma/migrations/**',
+      'apps/web/next-env.d.ts',
     ],
   },
   js.configs.recommended,

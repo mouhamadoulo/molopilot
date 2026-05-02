@@ -34,7 +34,7 @@
 | Rédiger Plan 1 (Phase 0)                  | ✅     | 2026-05-01 | `docs/superpowers/plans/2026-04-28-phase-0-fondations.md` |
 | Initialiser monorepo pnpm                 | ✅     | 2026-05-01 | `package.json`, `pnpm-workspace.yaml`, dotfiles           |
 | TypeScript base config                    | ✅     | 2026-05-01 | `tsconfig.base.json` strict                               |
-| Skeleton `apps/web` (Next.js 15)          | ⬜     |            |                                                           |
+| Skeleton `apps/web` (Next.js 15)          | ✅     | 2026-05-01 | App Router, route `/api/health`, build OK                 |
 | Skeleton `apps/api` (NestJS)              | ✅     | 2026-05-01 | Skeleton sans build — modules health/prisma en Task 13/14 |
 | Package `packages/db` (Prisma)            | ✅     | 2026-05-01 | Skeleton — schéma complet en Task 8                       |
 | Package `packages/shared` (zod DTOs)      | ✅     | 2026-05-01 | `TenantIdSchema` initial + tests node:test                |
