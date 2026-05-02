@@ -7,3 +7,276 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Enums
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  STANDARD
+  PRO
+
+  @@map("plan")
+}
+
+enum EstablishmentType {
+  RESTO
+  CAFE
+  BOUTIQUE
+
+  @@map("establishment_type")
+}
+
+enum UserRole {
+  OWNER
+  MANAGER
+  CASHIER
+
+  @@map("user_role")
+}
+
+enum ProductUnit {
+  PIECE
+  KG
+  L
+
+  @@map("product_unit")
+}
+
+enum StockMovementReason {
+  SALE
+  PURCHASE
+  ADJUST
+  TRANSFER
+  LOSS
+
+  @@map("stock_movement_reason")
+}
+
+enum StockMovementRefType {
+  SALE
+  MANUAL
+
+  @@map("stock_movement_ref_type")
+}
+
+enum SaleStatus {
+  DRAFT
+  PAID
+  VOIDED
+
+  @@map("sale_status")
+}
+
+enum PaymentMethod {
+  CASH
+  WAVE
+  OM
+  MIXED
+
+  @@map("payment_method")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tenants & users (root entities)
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Tenant {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  plan      Plan     @default(FREE)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  establishments Establishment[]
+  users          User[]
+  categories     Category[]
+  products       Product[]
+  stockLevels    StockLevel[]
+  stockMovements StockMovement[]
+  sales          Sale[]
+  saleItems      SaleItem[]
+
+  @@map("tenant")
+}
+
+model Establishment {
+  id        String            @id @default(uuid()) @db.Uuid
+  tenantId  String            @map("tenant_id") @db.Uuid
+  name      String
+  type      EstablishmentType
+  timezone  String            @default("Africa/Dakar")
+  currency  String            @default("XOF")
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  users          User[]
+  stockLevels    StockLevel[]
+  stockMovements StockMovement[]
+  sales          Sale[]
+
+  @@index([tenantId])
+  @@map("establishment")
+}
+
+model User {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @map("tenant_id") @db.Uuid
+  email           String?
+  passwordHash    String?  @map("password_hash")
+  pinHash         String?  @map("pin_hash")
+  role            UserRole
+  establishmentId String?  @map("establishment_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  establishment  Establishment?  @relation(fields: [establishmentId], references: [id], onDelete: SetNull)
+  stockMovements StockMovement[]
+  sales          Sale[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([establishmentId])
+  @@map("user")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Catalog
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  name      String
+  sortOrder Int      @default(0) @map("sort_order")
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@index([tenantId])
+  @@map("category")
+}
+
+model Product {
+  id         String      @id @default(uuid()) @db.Uuid
+  tenantId   String      @map("tenant_id") @db.Uuid
+  sku        String
+  name       String
+  categoryId String?     @map("category_id") @db.Uuid
+  priceCents Int         @map("price_cents")
+  costCents  Int         @default(0) @map("cost_cents")
+  taxRate    Decimal     @default(0) @map("tax_rate") @db.Decimal(5, 4)
+  trackStock Boolean     @default(true) @map("track_stock")
+  unit       ProductUnit @default(PIECE)
+  barcode    String?
+  archived   Boolean     @default(false)
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category       Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  stockLevels    StockLevel[]
+  stockMovements StockMovement[]
+  saleItems      SaleItem[]
+
+  @@unique([tenantId, sku])
+  @@index([tenantId])
+  @@index([categoryId])
+  @@map("product")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Stock
+// ─────────────────────────────────────────────────────────────────────────────
+
+model StockLevel {
+  id              String  @id @default(uuid()) @db.Uuid
+  tenantId        String  @map("tenant_id") @db.Uuid
+  productId       String  @map("product_id") @db.Uuid
+  establishmentId String  @map("establishment_id") @db.Uuid
+  quantity        Decimal @default(0) @db.Decimal(14, 3)
+  lowThreshold    Decimal @default(0) @map("low_threshold") @db.Decimal(14, 3)
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, establishmentId])
+  @@index([tenantId])
+  @@map("stock_level")
+}
+
+model StockMovement {
+  id              String               @id @default(uuid()) @db.Uuid
+  tenantId        String               @map("tenant_id") @db.Uuid
+  productId       String               @map("product_id") @db.Uuid
+  establishmentId String               @map("establishment_id") @db.Uuid
+  delta           Decimal              @db.Decimal(14, 3)
+  reason          StockMovementReason
+  refType         StockMovementRefType @map("ref_type")
+  refId           String?              @map("ref_id") @db.Uuid
+  userId          String?              @map("user_id") @db.Uuid
+  createdAt       DateTime             @default(now()) @map("created_at")
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([productId, establishmentId])
+  @@index([refType, refId])
+  @@map("stock_movement")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sales
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Sale {
+  id              String        @id @default(uuid()) @db.Uuid
+  tenantId        String        @map("tenant_id") @db.Uuid
+  establishmentId String        @map("establishment_id") @db.Uuid
+  cashierId       String?       @map("cashier_id") @db.Uuid
+  clientUuid      String        @map("client_uuid") @db.Uuid
+  status          SaleStatus    @default(DRAFT)
+  totalCents      Int           @default(0) @map("total_cents")
+  paidCents       Int           @default(0) @map("paid_cents")
+  paymentMethod   PaymentMethod @default(CASH) @map("payment_method")
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  syncedAt        DateTime?     @map("synced_at")
+  voidedAt        DateTime?     @map("voided_at")
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  cashier       User?         @relation(fields: [cashierId], references: [id], onDelete: SetNull)
+  items         SaleItem[]
+
+  @@unique([tenantId, clientUuid])
+  @@index([tenantId])
+  @@index([establishmentId, createdAt])
+  @@map("sale")
+}
+
+model SaleItem {
+  id             String  @id @default(uuid()) @db.Uuid
+  tenantId       String  @map("tenant_id") @db.Uuid
+  saleId         String  @map("sale_id") @db.Uuid
+  productId      String  @map("product_id") @db.Uuid
+  qty            Decimal @db.Decimal(14, 3)
+  unitPriceCents Int     @map("unit_price_cents")
+  lineTotalCents Int     @map("line_total_cents")
+  taxCents       Int     @default(0) @map("tax_cents")
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sale    Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([tenantId])
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_item")
+}

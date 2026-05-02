@@ -39,7 +39,7 @@
 | Package `packages/db` (Prisma)            | ✅     | 2026-05-01 | Skeleton — schéma complet en Task 8                       |
 | Package `packages/shared` (zod DTOs)      | ✅     | 2026-05-01 | `TenantIdSchema` initial + tests node:test                |
 | Docker Compose dev (Postgres)             | ⏸️     | 2026-05-01 | Fichiers OK — validation conteneur reportée (daemon down) |
-| Schéma Prisma initial complet             | ⬜     |            | Selon § 5 du spec                                         |
+| Schéma Prisma initial complet             | ✅     | 2026-05-02 | 9 modèles multi-tenant (§ 5 spec) + enums                 |
 | Migration initiale + RLS policies         | ⬜     |            |                                                           |
 | Config ESLint / Prettier / TS strict      | ✅     | 2026-05-01 | Flat config + plugin Prisma                               |
 | Husky + lint-staged                       | ✅     | 2026-05-01 | `.husky/pre-commit` → `lint-staged`                       |
