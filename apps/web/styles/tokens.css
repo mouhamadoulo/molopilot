@@ -1,0 +1,49 @@
+:root {
+  /* Primary — Orange Mali */
+  --color-primary-50: #fff4ed;
+  --color-primary-100: #ffe4d2;
+  --color-primary-200: #ffc9a5;
+  --color-primary-300: #ffa76e;
+  --color-primary-400: #ff8849;
+  --color-primary-500: #ff6b35;
+  --color-primary-600: #e5511d;
+  --color-primary-700: #c44114;
+  --color-primary-800: #9a3411;
+  --color-primary-900: #7c2a0e;
+
+  /* Accent — Jaune Sénégal */
+  --color-accent-50: #fef9e7;
+  --color-accent-100: #fdf1c2;
+  --color-accent-200: #fbe48a;
+  --color-accent-300: #f9d34d;
+  --color-accent-500: #f7b801;
+  --color-accent-700: #b58400;
+  --color-accent-900: #7a5800;
+
+  /* Success — Vert Téranga */
+  --color-success-50: #e6f7f0;
+  --color-success-100: #b8e8d5;
+  --color-success-300: #4cc79b;
+  --color-success-500: #00a878;
+  --color-success-700: #006b4d;
+  --color-success-900: #003d2c;
+
+  /* Neutrals — Charbon */
+  --color-neutral-50: #fafaf9;
+  --color-neutral-100: #f4f4f2;
+  --color-neutral-200: #e5e5e2;
+  --color-neutral-300: #d1d1cd;
+  --color-neutral-400: #a1a19d;
+  --color-neutral-500: #78787a;
+  --color-neutral-600: #57575a;
+  --color-neutral-700: #3f3f42;
+  --color-neutral-900: #1a1a1a;
+
+  /* Semantic */
+  --color-danger-500: #dc2626;
+  --color-warning-500: #f59e0b;
+  --color-info-500: #0ea5e9;
+
+  /* Custom shadow */
+  --shadow-glow-primary: 0 8px 32px -8px rgba(255, 107, 53, 0.5);
+}
