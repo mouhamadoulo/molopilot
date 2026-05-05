@@ -24,7 +24,7 @@ export function DemoMockup() {
               height={540}
               className="rounded-xl"
             />
-            <div className="absolute -top-3 -right-3 rounded-full bg-success-500 px-4 py-1 text-sm font-semibold text-white shadow-lg">
+            <div className="absolute -top-3 -right-3 rounded-full bg-success-700 px-4 py-1 text-sm font-semibold text-white shadow-lg">
               Synchronisé ✓
             </div>
           </div>
