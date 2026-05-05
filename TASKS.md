@@ -48,6 +48,48 @@
 
 ---
 
+## Track Frontend (IHM) — parallèle aux phases backend
+
+> Track parallèle à la roadmap backend. Préfixe `IHM-` pour éviter conflit avec numérotation Plan 1..10. Plan IHM-1 fournit le design system utilisé par toutes les phases suivantes (auth, back-office, caisse).
+
+### Plan IHM-1 — Design system + Landing `/` ✅
+
+**Objectif :** identité visuelle Molopilot, page d'accueil convertit visiteur → "Créer mon compte", primitives UI réutilisables Phase 1+.
+
+**Spec :** `docs/superpowers/specs/2026-05-02-ihm-foundation-design.md`
+**Plan :** `docs/superpowers/plans/2026-05-03-ihm-1-foundation-landing.md`
+
+| Tâche                                       | Statut | Date       | Notes                                        |
+| ------------------------------------------- | ------ | ---------- | -------------------------------------------- |
+| Tailwind v4 + tokens CSS-first              | ✅     | 2026-05-03 | `globals.css` `@theme`, palette Vibrant Afro |
+| Polices self-hostées (Inter + Plus Jakarta) | ✅     | 2026-05-03 | `next/font/local`, preload Plus Jakarta 800  |
+| Primitives UI (Button, Container, …)        | ✅     | 2026-05-03 | 5 composants `components/ui/`                |
+| Landing `/` (Hero, PainPoints, Features, …) | ✅     | 2026-05-05 | Route group `(marketing)`, 6 sections        |
+| Pages erreur (404 + error boundary)         | ✅     | 2026-05-05 | `app/not-found.tsx`, `app/error.tsx`         |
+| SEO (metadata, robots, sitemap, og)         | ✅     | 2026-05-05 | OG image placeholder, lang fr, locale fr_SN  |
+| Smoke E2E Playwright + axe-core             | ✅     | 2026-05-03 | `apps/web/e2e/landing.spec.ts`               |
+| Lighthouse CI (Perf 90, A11y 95, SEO 90)    | ✅     | 2026-05-05 | `lighthouserc.json` + job CI                 |
+
+### Plan IHM-2 — Page `/tarifs` ⬜
+
+| Tâche              | Statut | Date | Notes                         |
+| ------------------ | ------ | ---- | ----------------------------- |
+| Rédiger Plan IHM-2 | ⬜     |      | Réutilise design system IHM-1 |
+
+### Plan IHM-3 — Page `/contact` ⬜
+
+| Tâche              | Statut | Date | Notes |
+| ------------------ | ------ | ---- | ----- |
+| Rédiger Plan IHM-3 | ⬜     |      |       |
+
+### Plan IHM-4 — Page `/mentions-legales` ⬜
+
+| Tâche              | Statut | Date | Notes              |
+| ------------------ | ------ | ---- | ------------------ |
+| Rédiger Plan IHM-4 | ⬜     |      | Conformité Sénégal |
+
+---
+
 ## Phase 1 — Auth + multi-tenant + RLS ⬜
 
 | Tâche          | Statut | Date | Notes                 |

@@ -5,6 +5,7 @@ SaaS de gestion d'établissements (restaurants, cafés, boutiques) ciblant le ma
 ## Documents de référence
 
 - **Spec V1 :** [docs/superpowers/specs/2026-04-28-molopilot-saas-design.md](docs/superpowers/specs/2026-04-28-molopilot-saas-design.md)
+- **Spec IHM Foundation :** [docs/superpowers/specs/2026-05-02-ihm-foundation-design.md](docs/superpowers/specs/2026-05-02-ihm-foundation-design.md)
 - **Suivi des tâches :** [TASKS.md](TASKS.md) — toujours à jour
 - **Plans d'implémentation :** `docs/superpowers/plans/`
 
@@ -35,7 +36,8 @@ SaaS de gestion d'établissements (restaurants, cafés, boutiques) ciblant le ma
 ```
 molopilot/
   apps/
-    web/        # Next.js (front)
+    web/        # Next.js — route groups (marketing) public + (auth)/(app) à venir
+                # design system : tokens.css + components/ui/
     api/        # NestJS (back)
   packages/
     db/         # Prisma schema + client + migrations
@@ -64,6 +66,9 @@ molopilot/
 ## Phases d'implémentation (10 plans séquentiels)
 
 0. Fondations (monorepo, Docker dev, Prisma initial, CI) ← **en cours**
+
+**Track parallèle Frontend (IHM) :** IHM-1 (design system + landing `/`) ✅, IHM-2 (`/tarifs`), IHM-3 (`/contact`), IHM-4 (`/mentions-legales`). Préfixe `IHM-` pour éviter conflit numérotation backend.
+
 1. Auth + multi-tenant + RLS
 2. Catalogue (back-office)
 3. Stock
@@ -86,3 +91,14 @@ API Wave / OM, KDS, réservations, fidélité, commande en ligne, app native, Wo
 - Modes paiement clients finaux : Cash, Wave, Orange Money. API V2.
 - Devs locaux : large communauté Laravel/PHP, mais on a tranché Next.js/NestJS pour TS uniforme + écosystème PWA mûr.
 - Tarif SaaS : forfait mensuel par établissement (~15 000 FCFA), pas de % CA.
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
