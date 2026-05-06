@@ -42,3 +42,6 @@ packages/db/prisma/.env
 # Docker
 .docker-data/
 .superpowers/
+
+# graphify (local artifacts)
+graphify-out/
